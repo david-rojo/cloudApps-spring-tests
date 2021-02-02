@@ -2,6 +2,7 @@ package es.urjc.code.daw.library.rest.unit;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -100,17 +101,7 @@ class BookRestControllerUnitTest {
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.id", equalTo(Math.toIntExact(bookSaved.getId()))))
 			.andExpect(jsonPath("$.title", equalTo(bookToSave.getTitle())))
-			.andExpect(jsonPath("$.description", equalTo(bookToSave.getDescription())));
-	    
-	    mvc.perform(
-	    		get("/api/books/" + bookSaved.getId())
-	    		.contentType(MediaType.APPLICATION_JSON)
-	    	)
-	  	    .andExpect(status().isOk())
-	  	    .andExpect(jsonPath("$.id", equalTo(Math.toIntExact(bookSaved.getId()))))
-	  		.andExpect(jsonPath("$.title", equalTo(bookToSave.getTitle())))
-	  		.andExpect(jsonPath("$.description", equalTo(bookToSave.getDescription())));
-		
+			.andExpect(jsonPath("$.description", equalTo(bookToSave.getDescription())));		
 	}
 	
 	@Test
@@ -118,7 +109,7 @@ class BookRestControllerUnitTest {
 	@WithMockUser(username = "admin", password = "pass", roles = "ADMIN")
 	void deleteBookTest() throws Exception {	
 		
-		doNothing().when(bookService).delete(bookSaved.getId());
+		doNothing().when(bookService).delete(isA(Long.class));
 		
 		mvc.perform(
 				delete("/api/books/" + bookSaved.getId())
